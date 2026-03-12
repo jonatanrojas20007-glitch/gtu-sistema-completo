@@ -1,0 +1,294 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title><%= title %> - GTU</title>
+    <link rel="stylesheet" href="/css/qr.css">
+    <link rel="stylesheet" href="/css/dashboard.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/qrcodejs@1.0.0/qrcode.min.js"></script>
+</head>
+<body>
+    <div class="dashboard-container">
+        <!-- Header -->
+        <header class="dashboard-header">
+            <div class="header-top">
+                <div class="logo-section">
+                    <div class="logo">
+                        <div class="logo-icon">
+                            <i class="fas fa-qrcode"></i>
+                        </div>
+                        <h1>GTU <span>QR Generator</span></h1>
+                    </div>
+                </div>
+
+                <div class="user-info">
+                    <div class="user-details">
+                        <div class="user-name"><%= user.name %></div>
+                        <span class="user-role"><%= user.role %></span>
+                    </div>
+                    <div class="user-avatar">
+                        <%= user.name.charAt(0) %>
+                    </div>
+                    <div class="header-actions">
+                        <a href="/pages/dashboard" class="action-btn">
+                            <i class="fas fa-tachometer-alt"></i> Dashboard
+                        </a>
+                        <a href="/api/logout" class="logout-btn">
+                            <i class="fas fa-sign-out-alt"></i> Salir
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <nav class="dashboard-nav">
+                <div class="nav-menu">
+                    <a href="/pages/dashboard" class="nav-item">
+                        <i class="fas fa-home"></i> Dashboard
+                    </a>
+                    <a href="/pages/formulario" class="nav-item">
+                        <i class="fas fa-edit"></i> Formulario
+                    </a>
+                    <a href="/pages/registros" class="nav-item">
+                        <i class="fas fa-database"></i> Registros
+                    </a>
+                    <a href="/pages/qr" class="nav-item active">
+                        <i class="fas fa-qrcode"></i> QR
+                    </a>
+                </div>
+            </nav>
+        </header>
+
+        <!-- Main Content -->
+        <main class="dashboard-main">
+            <div class="qr-container">
+                <!-- Generador QR -->
+                <section class="qr-section">
+                    <h2><i class="fas fa-qrcode"></i> Generador de Códigos QR</h2>
+                    <p class="subtitle">Genera códigos QR para estudiantes, registros o cualquier información</p>
+                    
+                    <div class="qr-input-group">
+                        <input type="text" id="qr-data" placeholder="Ingresa el texto o URL para el QR" value="GTU-<%= new Date().getFullYear() %>-001">
+                        <button id="generate-qr" class="btn-primary">
+                            <i class="fas fa-qrcode"></i> Generar QR
+                        </button>
+                    </div>
+                    
+                    <div class="qr-result">
+                        <div id="qr-code" class="qr-code-container"></div>
+                        <button id="download-qr" class="btn-secondary" style="display: none;">
+                            <i class="fas fa-download"></i> Descargar QR
+                        </button>
+                    </div>
+                </section>
+
+                <!-- Acciones Rápidas -->
+                <section class="quick-actions">
+                    <h3><i class="fas fa-bolt"></i> Acciones Rápidas</h3>
+                    <div class="action-buttons">
+                        <a href="/pages/formulario" class="action-btn">
+                            <span><i class="fas fa-user-plus"></i></span>
+                            Nuevo Registro
+                        </a>
+                        <a href="/pages/registros" class="action-btn">
+                            <span><i class="fas fa-database"></i></span>
+                            Ver Registros
+                        </a>
+                        <button class="action-btn" id="qr-student-info">
+                            <span><i class="fas fa-graduation-cap"></i></span>
+                            QR para Estudiante
+                        </button>
+                        <button class="action-btn" id="qr-school-info">
+                            <span><i class="fas fa-school"></i></span>
+                            QR para Escuela
+                        </button>
+                    </div>
+                </section>
+
+                <!-- Ejemplos de uso -->
+                <section class="quick-actions" style="margin-top: 20px;">
+                    <h3><i class="fas fa-lightbulb"></i> Ejemplos de uso</h3>
+                    <div class="action-buttons">
+                        <button class="action-btn" onclick="document.getElementById('qr-data').value = 'GTU-EST-001'; generateQR()">
+                            <span>🎓</span>
+                            ID Estudiante
+                        </button>
+                        <button class="action-btn" onclick="document.getElementById('qr-data').value = 'https://gtu.edu.mx/registro'; generateQR()">
+                            <span>🔗</span>
+                            URL Registro
+                        </button>
+                        <button class="action-btn" onclick="document.getElementById('qr-data').value = 'GTU2024-ADMIN'; generateQR()">
+                            <span>⚙️</span>
+                            Código Admin
+                        </button>
+                    </div>
+                </section>
+            </div>
+        </main>
+
+        <!-- Footer -->
+        <footer class="dashboard-footer">
+            <div class="footer-content">
+                <div class="footer-left">
+                    <p>Sistema GTU - Generador QR v1.0</p>
+                    <p class="copyright">© 2024 Gestión de Talentos Universitarios</p>
+                </div>
+            </div>
+        </footer>
+    </div>
+
+    <!-- Scripts -->
+    <script src="/js/qr.js"></script>
+    <script>
+        window.currentUser = <%- JSON.stringify(user) %>;
+        
+        function generateQR() {
+            document.getElementById('generate-qr').click();
+        }
+    </script>
+
+    <style>
+        .qr-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        .qr-section {
+            background: white;
+            padding: 2rem;
+            border-radius: 15px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+            margin-bottom: 2rem;
+            text-align: center;
+        }
+        
+        .qr-section h2 {
+            color: #333;
+            margin-bottom: 10px;
+        }
+        
+        .qr-section .subtitle {
+            color: #666;
+            margin-bottom: 30px;
+        }
+        
+        .qr-input-group {
+            display: flex;
+            gap: 1rem;
+            margin: 2rem 0;
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+        
+        .qr-input-group input {
+            flex: 1;
+            padding: 15px 20px;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            font-size: 1rem;
+            transition: all 0.3s;
+        }
+        
+        .qr-input-group input:focus {
+            outline: none;
+            border-color: #FF6B35;
+            box-shadow: 0 0 0 3px rgba(255,107,53,0.1);
+        }
+        
+        .btn-primary {
+            padding: 15px 30px;
+            background: linear-gradient(135deg, #FF6B35 0%, #FF9A44 100%);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-weight: 600;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            transition: all 0.3s;
+        }
+        
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(255,107,53,0.3);
+        }
+        
+        .btn-secondary {
+            padding: 12px 25px;
+            background: #f0f0f0;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            font-weight: 600;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            transition: all 0.3s;
+        }
+        
+        .btn-secondary:hover {
+            background: #e0e0e0;
+        }
+        
+        .qr-result {
+            margin-top: 2rem;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 1rem;
+        }
+        
+        .qr-code-container {
+            padding: 20px;
+            background: white;
+            border: 2px solid #f0f0f0;
+            border-radius: 15px;
+            display: inline-block;
+        }
+        
+        #qr-code {
+            width: 200px;
+            height: 200px;
+        }
+        
+        .action-buttons {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+            margin-top: 1.5rem;
+        }
+        
+        .action-btn {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 1.5rem;
+            background: #f8f9fa;
+            border: 2px solid #e0e0e0;
+            border-radius: 12px;
+            text-decoration: none;
+            color: #333;
+            transition: all 0.3s;
+            cursor: pointer;
+            width: 100%;
+        }
+        
+        .action-btn span {
+            font-size: 2rem;
+            margin-bottom: 0.5rem;
+        }
+        
+        .action-btn:hover {
+            background: linear-gradient(135deg, #FF6B35 0%, #FF9A44 100%);
+            color: white;
+            border-color: #FF6B35;
+            transform: translateY(-3px);
+        }
+    </style>
+</body>
+</html>

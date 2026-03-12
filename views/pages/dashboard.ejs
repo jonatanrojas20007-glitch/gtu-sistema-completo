@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title><%= title %></title>
+    <link rel="stylesheet" href="/css/dashboard.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body class="role-<%= user.role %>">
+    <!-- Dashboard Header -->
+    <header class="dashboard-header">
+        <div class="header-top">
+            <div class="logo-section">
+                <div class="logo">
+                    <div class="logo-icon">
+                        <i class="fas fa-university"></i>
+                    </div>
+                    <h1>GTU <span>Dashboard</span></h1>
+                </div>
+                <div class="system-info">
+                    <span class="system-status active">
+                        <i class="fas fa-circle"></i> Sistema Activo
+                    </span>
+                </div>
+            </div>
+
+            <div class="user-info">
+                <div class="user-details">
+                    <div class="user-name" id="current-user"><%= user.name %></div>
+                    <span class="user-role" id="current-role"><%= user.role %></span>
+                </div>
+                <div class="user-avatar" id="user-avatar">
+                    <%= user.name.charAt(0) %>
+                </div>
+                <div class="header-actions">
+                    <button class="action-btn" id="action-filtros" onclick="window.location.href='/pages/filtros'">
+                        <i class="fas fa-filter"></i> Filtros Avanzados
+                    </button>
+                    <a href="/api/logout" class="logout-btn">
+                        <i class="fas fa-sign-out-alt"></i> Salir
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <nav class="dashboard-nav">
+            <div class="nav-menu">
+                <a href="/pages/dashboard" class="nav-item active">
+                    <i class="fas fa-home"></i> Dashboard
+                </a>
+                <a href="/pages/registros" class="nav-item">
+                    <i class="fas fa-database"></i> Registros
+                </a>
+                <a href="/pages/estadisticas" class="nav-item">
+                    <i class="fas fa-chart-pie"></i> Estadísticas
+                </a>
+                <a href="/pages/mapa" class="nav-item">
+                    <i class="fas fa-map-marked-alt"></i> Mapa de Calor
+                </a>
+                <% if (['superadmin', 'admin'].includes(user.role)) { %>
+                <a href="/pages/analisis" class="nav-item">
+                    <i class="fas fa-chart-bar"></i> Análisis
+                </a>
+                <% } %>
+                <% if (user.role === 'superadmin') { %>
+                <a href="/pages/admin" class="nav-item">
+                    <i class="fas fa-cog"></i> Administración
+                </a>
+                <% } %>
+                <a href="/pages/reportes" class="nav-item">
+                    <i class="fas fa-file-alt"></i> Reportes
+                </a>
+            </div>
+        </nav>
+    </header>
+
+    <!-- Main Content -->
+    <main class="dashboard-main">
+        <!-- Welcome Banner -->
+        <section class="welcome-banner">
+            <div class="welcome-text">
+                <h2 id="welcome-message">¡Bienvenido de nuevo, <%= user.name %>!</h2>
+                <p>Panel de control del Sistema GTU - Gestión de Talentos Universitarios</p>
+                <div class="role-badge" id="role-badge">
+                    <i class="fas fa-<%= user.role === 'superadmin' ? 'crown' : user.role === 'admin' ? 'user-shield' : 'chart-line' %>"></i>
+                    <span>
+                        <%= user.role === 'superadmin' ? 'Super Administrador - Acceso Completo' : 
+                           user.role === 'admin' ? 'Administrador - Gestión de Registros' : 
+                           'Asesor - Solo Visualización' %>
+                    </span>
+                </div>
+            </div>
+            <div class="welcome-time">
+                <div class="current-time" id="current-time"></div>
+                <div class="current-date" id="current-date"></div>
+            </div>
+        </section>
+
+        <!-- Stats Overview -->
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-header">
+                    <div class="stat-icon">
+                        <i class="fas fa-user-graduate"></i>
+                    </div>
+                    <span class="stat-trend positive">
+                        <i class="fas fa-arrow-up"></i> 12%
+                    </span>
+                </div>
+                <div class="stat-value" id="total-alumnos">0</div>
+                <div class="stat-label">Alumnos Registrados</div>
+            </div>
+
+            <div class="stat-card">
+                <div class="stat-header">
+                    <div class="stat-icon">
+                        <i class="fas fa-university"></i>
+                    </div>
+                    <span class="stat-trend positive">
+                        <i class="fas fa-arrow-up"></i> 5%
+                    </span>
+                </div>
+                <div class="stat-value" id="total-escuelas">0</div>
+                <div class="stat-label">Escuelas Registradas</div>
+            </div>
+
+            <div class="stat-card">
+                <div class="stat-header">
+                    <div class="stat-icon">
+                        <i class="fas fa-chart-line"></i>
+                    </div>
+                    <span class="stat-trend positive">
+                        <i class="fas fa-arrow-up"></i> 8%
+                    </span>
+                </div>
+                <div class="stat-value" id="registros-hoy">0</div>
+                <div class="stat-label">Registros Hoy</div>
+            </div>
+        </div>
+
+        <!-- Quick Actions -->
+        <section class="quick-actions">
+            <div class="section-header">
+                <h3><i class="fas fa-bolt"></i> Acciones Rápidas</h3>
+            </div>
+            <div class="actions-grid">
+                <a href="/pages/formulario" class="action-btn">
+                    <i class="fas fa-user-plus"></i>
+                    <span>Nuevo Registro</span>
+                </a>
+                
+                <a href="/pages/estadisticas" class="action-btn">
+                    <i class="fas fa-chart-pie"></i>
+                    <span>Ver Estadísticas</span>
+                </a>
+                
+                <a href="/pages/mapa" class="action-btn">
+                    <i class="fas fa-map"></i>
+                    <span>Mapa de Calor</span>
+                </a>
+                
+                <% if (user.role !== 'asesor') { %>
+                <a href="/pages/reportes" class="action-btn">
+                    <i class="fas fa-file-export"></i>
+                    <span>Generar Reporte</span>
+                </a>
+                <% } %>
+            </div>
+        </section>
+
+        <!-- System Status -->
+        <div class="system-status-card">
+            <div class="section-header">
+                <h3><i class="fas fa-server"></i> Estado del Sistema</h3>
+            </div>
+            <div class="status-grid">
+                <div class="status-item">
+                    <div class="status-indicator active"></div>
+                    <div class="status-info">
+                        <div class="status-title">Base de Datos</div>
+                        <div class="status-desc">Conectado y operativo</div>
+                    </div>
+                </div>
+                <div class="status-item">
+                    <div class="status-indicator active"></div>
+                    <div class="status-info">
+                        <div class="status-title">Servidor Web</div>
+                        <div class="status-desc">Respuesta óptima</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Scripts -->
+    <script src="/js/dashboard.js"></script>
+    <script>
+        // Pasar datos del usuario al JS
+        window.currentUser = <%- JSON.stringify(user) %>;
+        
+        // Reloj en tiempo real
+        function updateClock() {
+            const now = new Date();
+            document.getElementById('current-time').textContent = now.toLocaleTimeString('es-ES', {
+                hour12: false,
+                hour: '2-digit',
+                minute: '2-digit',
+                second: '2-digit'
+            });
+            document.getElementById('current-date').textContent = now.toLocaleDateString('es-ES', {
+                weekday: 'long',
+                year: 'numeric',
+                month: 'long',
+                day: 'numeric'
+            });
+        }
+        updateClock();
+        setInterval(updateClock, 1000);
+    </script>
+</body>
+</html>

@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title><%= title %> - GTU</title>
+    <link rel="stylesheet" href="/css/filtros.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <div class="filtros-container">
+        <!-- Header -->
+        <header class="filtros-header">
+            <div class="header-left">
+                <div class="logo">
+                    <i class="fas fa-filter"></i>
+                    <div>
+                        <h1>Filtros Avanzados GTU</h1>
+                        <p class="subtitle">Filtra y analiza los datos de estudiantes</p>
+                    </div>
+                </div>
+            </div>
+            <div class="header-right">
+                <div class="user-info">
+                    <span id="current-user"><%= user.name %></span>
+                    <span class="role-badge" id="current-role"><%= user.role %></span>
+                </div>
+                <div class="header-actions">
+                    <a href="/pages/dashboard" class="action-btn">
+                        <i class="fas fa-tachometer-alt"></i> Dashboard
+                    </a>
+                    <a href="/api/logout" class="action-btn">
+                        <i class="fas fa-sign-out-alt"></i> Salir
+                    </a>
+                </div>
+            </div>
+        </header>
+
+        <!-- Barra de Filtros Rápidos -->
+        <div class="quick-filters">
+            <h3><i class="fas fa-bolt"></i> Filtros Rápidos</h3>
+            <div class="quick-filters-grid">
+                <button class="quick-filter-btn" data-filter="hoy">
+                    <i class="fas fa-calendar-day"></i>
+                    <span>Registros Hoy</span>
+                </button>
+                <button class="quick-filter-btn" data-filter="semana">
+                    <i class="fas fa-calendar-week"></i>
+                    <span>Última Semana</span>
+                </button>
+                <button class="quick-filter-btn" data-filter="mes">
+                    <i class="fas fa-calendar-alt"></i>
+                    <span>Último Mes</span>
+                </button>
+                <button class="quick-filter-btn" data-filter="queretaro">
+                    <i class="fas fa-map-marker-alt"></i>
+                    <span>Querétaro</span>
+                </button>
+                <button class="quick-filter-btn" data-filter="sistemas">
+                    <i class="fas fa-laptop-code"></i>
+                    <span>Ing. Sistemas</span>
+                </button>
+                <button class="quick-filter-btn" id="clear-all-filters">
+                    <i class="fas fa-broom"></i>
+                    <span>Limpiar Todo</span>
+                </button>
+            </div>
+        </div>
+
+        <!-- Filtros Avanzados -->
+        <div class="advanced-filters">
+            <div class="filters-section">
+                <!-- Filtro por Fechas -->
+                <div class="filter-card">
+                    <div class="filter-header">
+                        <h4><i class="fas fa-calendar"></i> Rango de Fechas</h4>
+                        <button class="toggle-filter">
+                            <i class="fas fa-chevron-down"></i>
+                        </button>
+                    </div>
+                    <div class="filter-content">
+                        <div class="date-range">
+                            <div class="date-input">
+                                <label for="start-date">Desde:</label>
+                                <input type="date" id="start-date" class="date-picker">
+                            </div>
+                            <div class="date-input">
+                                <label for="end-date">Hasta:</label>
+                                <input type="date" id="end-date" class="date-picker">
+                            </div>
+                        </div>
+                        <div class="preset-dates">
+                            <button class="preset-btn" data-preset="today">Hoy</button>
+                            <button class="preset-btn" data-preset="last7">Últimos 7 días</button>
+                            <button class="preset-btn" data-preset="last30">Últimos 30 días</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Filtro por Ubicación -->
+                <div class="filter-card">
+                    <div class="filter-header">
+                        <h4><i class="fas fa-map-marked-alt"></i> Ubicación</h4>
+                        <button class="toggle-filter">
+                            <i class="fas fa-chevron-down"></i>
+                        </button>
+                    </div>
+                    <div class="filter-content">
+                        <div class="filter-grid">
+                            <div class="filter-item">
+                                <label for="estado-filter">
+                                    <i class="fas fa-landmark"></i> Estado
+                                </label>
+                                <select id="estado-filter" class="filter-select">
+                                    <option value="">Todos los estados</option>
+                                    <option value="Querétaro">Querétaro</option>
+                                    <option value="México">Estado de México</option>
+                                </select>
+                            </div>
+                            
+                            <div class="filter-item">
+                                <label for="municipio-filter">
+                                    <i class="fas fa-city"></i> Municipio
+                                </label>
+                                <select id="municipio-filter" class="filter-select">
+                                    <option value="">Todos los municipios</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Filtro por Escuela -->
+                <div class="filter-card">
+                    <div class="filter-header">
+                        <h4><i class="fas fa-university"></i> Escuela</h4>
+                        <button class="toggle-filter">
+                            <i class="fas fa-chevron-down"></i>
+                        </button>
+                    </div>
+                    <div class="filter-content">
+                        <div class="filter-grid">
+                            <div class="filter-item">
+                                <label for="escuela-filter">
+                                    <i class="fas fa-school"></i> Nombre de Escuela
+                                </label>
+                                <select id="escuela-filter" class="filter-select">
+                                    <option value="">Todas las escuelas</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Filtro por Carrera -->
+                <div class="filter-card">
+                    <div class="filter-header">
+                        <h4><i class="fas fa-graduation-cap"></i> Carrera</h4>
+                        <button class="toggle-filter">
+                            <i class="fas fa-chevron-down"></i>
+                        </button>
+                    </div>
+                    <div class="filter-content">
+                        <div class="filter-grid">
+                            <div class="filter-item">
+                                <label for="carrera-filter">
+                                    <i class="fas fa-book"></i> Carrera
+                                </label>
+                                <select id="carrera-filter" class="filter-select">
+                                    <option value="">Todas las carreras</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="carrera-tags" id="carrera-tags">
+                            <!-- Tags dinámicos -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Resultados -->
+            <div class="results-section">
+                <div class="results-header">
+                    <h3><i class="fas fa-eye"></i> Resultados</h3>
+                    <div class="results-stats">
+                        <div class="stat">
+                            <span class="stat-label">Filtrados:</span>
+                            <span class="stat-value" id="filtrados-resultados">0</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Filtros Aplicados -->
+                <div class="applied-filters">
+                    <h4><i class="fas fa-check-circle"></i> Filtros Aplicados</h4>
+                    <div class="applied-tags" id="applied-tags">
+                        <span class="no-filters">No hay filtros aplicados</span>
+                    </div>
+                </div>
+
+                <!-- Previsualización -->
+                <div class="preview-section">
+                    <div class="preview-table-container">
+                        <table class="preview-table">
+                            <thead>
+                                <tr>
+                                    <th>Nombre</th>
+                                    <th>Escuela</th>
+                                    <th>Carrera</th>
+                                    <th>Municipio</th>
+                                </tr>
+                            </thead>
+                            <tbody id="preview-table-body">
+                                <tr>
+                                    <td colspan="4" class="no-data">
+                                        <i class="fas fa-database"></i>
+                                        <span>Aplica filtros para ver resultados</span>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- Acciones -->
+                <div class="actions-section">
+                    <div class="action-buttons">
+                        <button class="btn-primary" id="apply-filters-btn">
+                            <i class="fas fa-check"></i> Aplicar Filtros
+                        </button>
+                        <button class="btn-secondary" id="reset-filters-btn">
+                            <i class="fas fa-redo"></i> Restablecer
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Footer -->
+        <footer class="filtros-footer">
+            <div class="footer-left">
+                <p><i class="fas fa-info-circle"></i> Filtros en tiempo real</p>
+            </div>
+            <div class="footer-right">
+                <p>Sistema de Filtros GTU</p>
+            </div>
+        </footer>
+    </div>
+
+    <!-- Scripts -->
+    <script src="/js/filtros.js"></script>
+    <script>
+        window.currentUser = <%- JSON.stringify(user) %>;
+    </script>
+</body>
+</html>

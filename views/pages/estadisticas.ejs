@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title><%= title %> - GTU</title>
+    <link rel="stylesheet" href="/css/estadisticas.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+    <div class="stats-container">
+        <!-- Header -->
+        <header class="stats-header">
+            <div class="header-left">
+                <div class="logo">
+                    <i class="fas fa-chart-pie"></i>
+                    <h1>Estadísticas GTU</h1>
+                </div>
+                <p class="subtitle">Análisis completo de formularios registrados</p>
+            </div>
+            <div class="header-right">
+                <div class="user-info">
+                    <span id="current-user"><%= user.name %></span>
+                    <span class="role-badge" id="current-role"><%= user.role %></span>
+                </div>
+                <div class="header-actions">
+                    <button class="action-btn" id="refresh-stats">
+                        <i class="fas fa-sync-alt"></i> Actualizar
+                    </button>
+                    <a href="/pages/dashboard" class="action-btn">
+                        <i class="fas fa-tachometer-alt"></i> Dashboard
+                    </a>
+                    <a href="/api/logout" class="action-btn">
+                        <i class="fas fa-sign-out-alt"></i> Salir
+                    </a>
+                </div>
+            </div>
+        </header>
+
+        <!-- Estado vacío (se muestra cuando no hay datos) -->
+        <div id="empty-state" class="empty-state" style="display: none;">
+            <div class="empty-icon">
+                <i class="fas fa-chart-bar"></i>
+            </div>
+            <h3>No hay datos para mostrar</h3>
+            <p>Las estadísticas se generarán automáticamente cuando los usuarios completen el formulario de registro.</p>
+            <div class="empty-actions">
+                <a href="/pages/formulario" class="btn-primary">
+                    <i class="fas fa-plus"></i> Ir al Formulario
+                </a>
+                <a href="/pages/dashboard" class="btn-secondary">
+                    <i class="fas fa-tachometer-alt"></i> Volver al Dashboard
+                </a>
+            </div>
+        </div>
+
+        <!-- Sección de Estadísticas -->
+        <div id="stats-section">
+            <!-- KPI Cards -->
+            <div class="kpi-grid">
+                <div class="kpi-card">
+                    <div class="kpi-icon" style="background: linear-gradient(135deg, #FF6B35 0%, #FF9A44 100%);">
+                        <i class="fas fa-user-graduate"></i>
+                    </div>
+                    <div class="kpi-content">
+                        <h3>Total Alumnos</h3>
+                        <p class="kpi-value" id="total-alumnos">0</p>
+                        <p class="kpi-change">Registros totales</p>
+                    </div>
+                </div>
+                
+                <div class="kpi-card">
+                    <div class="kpi-icon" style="background: linear-gradient(135deg, #FF9A44 0%, #FFD166 100%);">
+                        <i class="fas fa-university"></i>
+                    </div>
+                    <div class="kpi-content">
+                        <h3>Escuelas Únicas</h3>
+                        <p class="kpi-value" id="total-escuelas">0</p>
+                        <p class="kpi-change">Instituciones diferentes</p>
+                    </div>
+                </div>
+                
+                <div class="kpi-card">
+                    <div class="kpi-icon" style="background: linear-gradient(135deg, #FFD166 0%, #06D6A0 100%);">
+                        <i class="fas fa-graduation-cap"></i>
+                    </div>
+                    <div class="kpi-content">
+                        <h3>Carreras Únicas</h3>
+                        <p class="kpi-value" id="total-carreras">0</p>
+                        <p class="kpi-change">Intereses académicos</p>
+                    </div>
+                </div>
+                
+                <div class="kpi-card">
+                    <div class="kpi-icon" style="background: linear-gradient(135deg, #06D6A0 0%, #118AB2 100%);">
+                        <i class="fas fa-calendar-day"></i>
+                    </div>
+                    <div class="kpi-content">
+                        <h3>Registros Hoy</h3>
+                        <p class="kpi-value" id="registros-hoy">0</p>
+                        <p class="kpi-change">Actividad del día</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Pestañas de Visualización -->
+            <div class="view-tabs">
+                <button class="tab-btn active" data-view="general">
+                    <i class="fas fa-chart-bar"></i> General
+                </button>
+                <button class="tab-btn" data-view="geografico">
+                    <i class="fas fa-map"></i> Geográfico
+                </button>
+                <button class="tab-btn" data-view="temporal">
+                    <i class="fas fa-chart-line"></i> Temporal
+                </button>
+            </div>
+
+            <!-- Gráficos -->
+            <div class="charts-grid">
+                <!-- Gráfico 1: Escuelas -->
+                <div class="chart-card">
+                    <div class="chart-header">
+                        <h3><i class="fas fa-university"></i> Distribución por Escuela</h3>
+                    </div>
+                    <div class="chart-container">
+                        <canvas id="escuelaChart"></canvas>
+                    </div>
+                </div>
+                
+                <!-- Gráfico 2: Carreras -->
+                <div class="chart-card">
+                    <div class="chart-header">
+                        <h3><i class="fas fa-graduation-cap"></i> Carreras de Interés</h3>
+                    </div>
+                    <div class="chart-container">
+                        <canvas id="carreraChart"></canvas>
+                    </div>
+                </div>
+                
+                <!-- Gráfico 3: Género -->
+                <div class="chart-card">
+                    <div class="chart-header">
+                        <h3><i class="fas fa-venus-mars"></i> Distribución por Género</h3>
+                    </div>
+                    <div class="chart-container">
+                        <canvas id="generoChart"></canvas>
+                    </div>
+                </div>
+                
+                <!-- Gráfico 4: Tendencia -->
+                <div class="chart-card">
+                    <div class="chart-header">
+                        <h3><i class="fas fa-chart-line"></i> Tendencia de Registros</h3>
+                    </div>
+                    <div class="chart-container">
+                        <canvas id="tendenciaChart"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Footer -->
+        <footer class="stats-footer">
+            <div class="footer-left">
+                <p><i class="fas fa-sync-alt"></i> Actualizado: <span id="last-update">--:--:--</span></p>
+            </div>
+            <div class="footer-right">
+                <p>Sistema GTU Estadísticas v2.0</p>
+            </div>
+        </footer>
+    </div>
+
+    <!-- Scripts -->
+    <script src="/js/estadisticas.js"></script>
+    <script>
+        window.currentUser = <%- JSON.stringify(user) %>;
+    </script>
+</body>
+</html>
