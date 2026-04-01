@@ -1,71 +1,33 @@
+version: '3.8'
+
 services:
-  # Base de datos PostgreSQL
-  postgres:
-    image: postgres:15
-    container_name: gtu_postgres
+  db:
+    image: postgres:15-alpine
     restart: always
-    environment:
-      POSTGRES_DB: gtu_db
-      POSTGRES_USER: gtu_admin
-      POSTGRES_PASSWORD: GTU2024Secure
     ports:
       - "5432:5432"
+    environment:
+      POSTGRES_DB: school_crm
+      POSTGRES_USER: admin
+      POSTGRES_PASSWORD: adminpassword
+    
     volumes:
       - postgres_data:/var/lib/postgresql/data
-      - ./init.sql:/docker-entrypoint-initdb.d/init.sql
-    networks:
-      - gtu_network
-    healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U gtu_admin -d gtu_db"]
-      interval: 10s
-      timeout: 5s
-      retries: 5
 
-  # Interfaz gráfica de PostgreSQL
-  pgadmin:
-    image: dpage/pgadmin4
-    container_name: gtu_pgadmin
-    restart: always
-    environment:
-      PGADMIN_DEFAULT_EMAIL: admin@gtu.com
-      PGADMIN_DEFAULT_PASSWORD: admin123
-    ports:
-      - "5050:80"
-    depends_on:
-      - postgres
-    networks:
-      - gtu_network
-    volumes:
-      - pgadmin_data:/var/lib/pgadmin
-
-  # Aplicación GTU (Frontend + API)
-  app:
+  bot:
     build: .
-    container_name: gtu_app
     restart: always
-    ports:
-      - "3000:3000"
-    environment:
-      - NODE_ENV=production
-      - DB_HOST=postgres
-      - DB_PORT=5432
-      - DB_USER=gtu_admin
-      - DB_PASSWORD=GTU2024Secure
-      - DB_NAME=gtu_db
-      - SESSION_SECRET=gtu-production-secret-key
-    depends_on:
-      postgres:
-        condition: service_healthy
-    networks:
-      - gtu_network
     volumes:
-      - ./public:/app/public
-      - ./views:/app/views
+      - .:/app
+    ports:
+      - "8000:8000"
+    environment:
+      - TELEGRAM_TOKEN=8550457735:AAHznV8NMMTjlVL_m532JK51nQ7VLtMBBRI
+      - DATABASE_URL=${DATABASE_URL}
+    depends_on:
+      - db
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
 
 volumes:
   postgres_data:
-  pgadmin_data:
-
-networks:
-  gtu_network:
-    driver: bridge
